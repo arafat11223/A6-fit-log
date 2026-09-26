@@ -19,7 +19,8 @@ const WorkoutDetailsPage = async ({
 
   return (
     <main>
-      <section className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-20">
+      <section className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-16">
+
         {/* Back Button */}
         <Link
           href="/#library"
@@ -29,9 +30,10 @@ const WorkoutDetailsPage = async ({
         </Link>
 
         {/* Main Details */}
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-16">
-          {/* Image */}
-          <div className="relative aspect-[4/3] overflow-hidden bg-white/5">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
+
+          {/* ================= LEFT : IMAGE ================= */}
+          <div className="relative aspect-[4/3] overflow-hidden bg-white/5 lg:sticky lg:top-8">
             <Image
               src={workout.image}
               alt={workout.name}
@@ -42,8 +44,9 @@ const WorkoutDetailsPage = async ({
             />
           </div>
 
-          {/* Content */}
+          {/* ================= RIGHT : CONTENT ================= */}
           <div>
+
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
               {workout.muscleGroups.map((group) => (
@@ -72,6 +75,7 @@ const WorkoutDetailsPage = async ({
 
             {/* Specs */}
             <div className="mt-8 grid grid-cols-2 border-y border-white/10 md:grid-cols-3">
+
               <div className="border-b border-white/10 p-4 md:border-r">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">
                   Equipment
@@ -131,6 +135,7 @@ const WorkoutDetailsPage = async ({
                   {workout.caloriesBurned}
                 </p>
               </div>
+
             </div>
 
             {/* Rating */}
@@ -146,36 +151,41 @@ const WorkoutDetailsPage = async ({
 
             {/* Action Buttons */}
             <WorkoutActions workout={workout} />
+
+            {/* ================= INSTRUCTIONS ================= */}
+            <section className="mt-12 border-t border-white/10 pt-10">
+
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ccff00]">
+                HOW TO PERFORM
+              </p>
+
+              <h2 className="mt-3 font-[var(--font-oswald)] text-4xl font-bold uppercase md:text-5xl">
+                Instructions
+              </h2>
+
+              <ol className="mt-7 space-y-5">
+                {workout.instructions.map(
+                  (instruction, index) => (
+                    <li
+                      key={index}
+                      className="flex gap-4 border-b border-white/10 pb-5"
+                    >
+                      <span className="shrink-0 font-[var(--font-oswald)] text-2xl font-bold text-[#ccff00]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                      <p className="pt-1 text-sm leading-7 text-white/60 md:text-base">
+                        {instruction}
+                      </p>
+                    </li>
+                  )
+                )}
+              </ol>
+
+            </section>
+
           </div>
         </div>
-
-        {/* Instructions */}
-        <section className="mt-16 border-t border-white/10 pt-12">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ccff00]">
-            HOW TO PERFORM
-          </p>
-
-          <h2 className="mt-3 font-[var(--font-oswald)] text-4xl font-bold uppercase md:text-5xl">
-            Instructions
-          </h2>
-
-          <ol className="mt-8 max-w-4xl space-y-5">
-            {workout.instructions.map((instruction, index) => (
-              <li
-                key={index}
-                className="flex gap-5 border-b border-white/10 pb-5"
-              >
-                <span className="font-[var(--font-oswald)] text-2xl font-bold text-[#ccff00]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
-                <p className="pt-1 text-sm leading-7 text-white/60 md:text-base">
-                  {instruction}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
       </section>
     </main>
   );
