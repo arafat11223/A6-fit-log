@@ -13,7 +13,7 @@ const NotFound = () => {
         </h1>
 
         <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/40">
-          The page you are looking for doesn't exist.
+          The page you are looking for doesnt exist.
           Lets get you back to the workout library.
         </p>
 

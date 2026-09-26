@@ -8,7 +8,6 @@ import { useFitLog } from "../context/FitLogContext";
 
 const Navbar = () => {
   const pathname = usePathname();
-
   const { plan, saved } = useFitLog();
 
   const isWorkoutActive =
@@ -18,9 +17,13 @@ const Navbar = () => {
 
   return (
     <header className="border-b border-white/10 bg-[#090909]">
-      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-5 md:px-8">
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-5 md:gap-6 md:px-8">
+
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center gap-2">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2"
+        >
           <Image
             src="/logo.png"
             alt="FitLog logo"
@@ -30,12 +33,12 @@ const Navbar = () => {
             className="h-8 w-8 object-contain"
           />
 
-          <span className="font-[var(--font-oswald)] text-xl font-bold tracking-wide text-white">
+          <span className="font-[var(--font-oswald)] text-lg font-bold tracking-wide text-white sm:text-xl">
             FITLOG
           </span>
         </Link>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-2 md:flex">
           <Link
             href="/"
@@ -61,10 +64,10 @@ const Navbar = () => {
         </nav>
 
         {/* Counters */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/my-plan"
-            className="flex items-center gap-2 rounded-full bg-[#ccff00] px-3 py-1.5 text-xs font-black uppercase text-black"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#ccff00] px-2.5 py-1.5 text-[10px] font-black uppercase text-black sm:gap-2 sm:px-3 sm:text-xs"
           >
             <span>Plan</span>
             <span>{plan.length}</span>
@@ -72,12 +75,39 @@ const Navbar = () => {
 
           <Link
             href="/my-plan"
-            className="flex items-center gap-2 rounded-full border border-white/30 px-3 py-1.5 text-xs font-black uppercase text-white"
+            className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/30 px-2.5 py-1.5 text-[10px] font-black uppercase text-white sm:gap-2 sm:px-3 sm:text-xs"
           >
             <span>Saved</span>
             <span>{saved.length}</span>
           </Link>
         </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="border-t border-white/5 md:hidden">
+        <nav className="mx-auto flex max-w-7xl px-4 sm:px-5">
+          <Link
+            href="/"
+            className={`flex-1 py-3 text-center text-[10px] font-black uppercase tracking-wider transition ${
+              isWorkoutActive
+                ? "text-[#ccff00]"
+                : "text-white/40 hover:text-white"
+            }`}
+          >
+            Workout
+          </Link>
+
+          <Link
+            href="/my-plan"
+            className={`flex-1 py-3 text-center text-[10px] font-black uppercase tracking-wider transition ${
+              isPlanActive
+                ? "text-[#ccff00]"
+                : "text-white/40 hover:text-white"
+            }`}
+          >
+            My Plan
+          </Link>
+        </nav>
       </div>
     </header>
   );
