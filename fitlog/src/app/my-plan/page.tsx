@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 import { useFitLog } from "../../context/FitLogContext";
 import { Workout } from "../../types/workout";
@@ -15,6 +15,8 @@ const MyPlanPage = () => {
     saved,
     removeFromPlan,
     removeFromSaved,
+    markAsDone,
+    isCompleted,
   } = useFitLog();
 
   const [activeTab, setActiveTab] = useState<Tab>("plan");
@@ -28,18 +30,35 @@ const MyPlanPage = () => {
   );
 
   const totalCalories = plan.reduce(
-    (total, workout) => total + workout.caloriesBurned,
+    (total, workout) =>
+      total + workout.caloriesBurned,
     0
   );
 
   const handleRemove = (workout: Workout) => {
     if (activeTab === "plan") {
       removeFromPlan(workout.id);
-      toast.success("Removed from today's plan");
+
+      toast.success(
+        "Removed from today's plan"
+      );
     } else {
       removeFromSaved(workout.id);
+
       toast.success("Removed from saved");
     }
+  };
+
+  const handleMarkAsDone = (workout: Workout) => {
+    if (isCompleted(workout.id)) {
+      return;
+    }
+
+    markAsDone(workout.id);
+
+    toast.success(
+      `${workout.name} marked as done`
+    );
   };
 
   return (
@@ -63,7 +82,6 @@ const MyPlanPage = () => {
 
         {/* Metrics */}
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-
           <MetricCard
             label="Exercises"
             value={plan.length}
@@ -78,7 +96,6 @@ const MyPlanPage = () => {
             label="Calories"
             value={totalCalories}
           />
-
         </div>
 
         {/* Tabs */}
@@ -92,7 +109,7 @@ const MyPlanPage = () => {
                 : "text-white/40 hover:text-white"
             }`}
           >
-            Today's Plan
+            Todays Plan
           </button>
 
           <button
@@ -108,9 +125,8 @@ const MyPlanPage = () => {
           </button>
         </div>
 
-        {/* Loading / List / Empty */}
+        {/* Workout List */}
         <div className="mt-8">
-
           {currentWorkouts.length === 0 ? (
             <EmptyState activeTab={activeTab} />
           ) : (
@@ -120,14 +136,18 @@ const MyPlanPage = () => {
                   key={workout.id}
                   workout={workout}
                   activeTab={activeTab}
-                  onRemove={() => handleRemove(workout)}
+                  completed={isCompleted(workout.id)}
+                  onRemove={() =>
+                    handleRemove(workout)
+                  }
+                  onMarkAsDone={() =>
+                    handleMarkAsDone(workout)
+                  }
                 />
               ))}
             </div>
           )}
-
         </div>
-
       </section>
     </main>
   );
@@ -141,109 +161,124 @@ interface MetricCardProps {
 const MetricCard = ({
   label,
   value,
-}: MetricCardProps) => {
-  return (
-    <div className="border border-white/10 bg-white/[0.02] p-6">
-      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35">
-        {label}
-      </p>
+}: MetricCardProps) => (
+  <div className="border border-white/10 bg-white/[0.02] p-6">
+    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35">
+      {label}
+    </p>
 
-      <p className="mt-3 font-[var(--font-oswald)] text-4xl font-bold">
-        {value}
-      </p>
-    </div>
-  );
-};
+    <p className="mt-3 font-[var(--font-oswald)] text-4xl font-bold">
+      {value}
+    </p>
+  </div>
+);
 
 interface WorkoutPlanCardProps {
   workout: Workout;
   activeTab: Tab;
+  completed: boolean;
   onRemove: () => void;
+  onMarkAsDone: () => void;
 }
 
 const WorkoutPlanCard = ({
   workout,
   activeTab,
+  completed,
   onRemove,
-}: WorkoutPlanCardProps) => {
-  return (
-    <article className="flex flex-col gap-5 border border-white/10 bg-white/[0.02] p-4 md:flex-row md:items-center">
+  onMarkAsDone,
+}: WorkoutPlanCardProps) => (
+  <article
+    className={`flex flex-col gap-5 border p-4 md:flex-row md:items-center ${
+      completed
+        ? "border-[#ccff00]/40 bg-[#ccff00]/5"
+        : "border-white/10 bg-white/[0.02]"
+    }`}
+  >
+    {/* Image */}
+    <div className="relative h-48 w-full shrink-0 overflow-hidden bg-white/5 md:h-32 md:w-48">
+      <img
+        src={workout.image}
+        alt={workout.name}
+        className={`h-full w-full object-cover ${
+          completed ? "opacity-60" : ""
+        }`}
+      />
+    </div>
 
-      {/* Image */}
-      <div className="relative h-48 w-full shrink-0 overflow-hidden bg-white/5 md:h-32 md:w-48">
-        <img
-          src={workout.image}
-          alt={workout.name}
-          className="h-full w-full object-cover"
-        />
+    {/* Information */}
+    <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap gap-2">
+        {workout.muscleGroups.map((group) => (
+          <span
+            key={group}
+            className="text-[9px] font-bold uppercase tracking-wider text-[#ccff00]"
+          >
+            {group}
+          </span>
+        ))}
       </div>
 
-      {/* Content */}
-      <div className="min-w-0 flex-1">
-
-        <div className="flex flex-wrap gap-2">
-          {workout.muscleGroups.map((group) => (
-            <span
-              key={group}
-              className="text-[9px] font-bold uppercase tracking-wider text-[#ccff00]"
-            >
-              {group}
-            </span>
-          ))}
-        </div>
-
-        <h2 className="mt-2 font-[var(--font-oswald)] text-2xl font-bold uppercase">
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <h2 className="font-[var(--font-oswald)] text-2xl font-bold uppercase">
           {workout.name}
         </h2>
 
-        <p className="mt-1 text-xs text-white/40">
-          {workout.equipment}
-        </p>
-
-        {/* Stats */}
-        <div className="mt-4 flex flex-wrap gap-5 text-xs text-white/50">
-          <span>◷ {workout.duration} min</span>
-
-          <span>🔥 {workout.caloriesBurned} kcal</span>
-
-          <span>★ {workout.rating}</span>
-        </div>
+        {completed && (
+          <span className="bg-[#ccff00] px-2 py-1 text-[9px] font-black uppercase text-black">
+            Done
+          </span>
+        )}
       </div>
 
-      {/* Actions */}
-      <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col">
+      <p className="mt-1 text-xs text-white/40">
+        {workout.equipment}
+      </p>
 
-        <Link
-          href={`/workouts/${workout.id}`}
-          className="border border-white/15 px-4 py-2 text-center text-[10px] font-black uppercase tracking-wide text-white transition hover:border-[#ccff00] hover:text-[#ccff00]"
-        >
-          View Details
-        </Link>
+      <div className="mt-4 flex flex-wrap gap-5 text-xs text-white/50">
+        <span>◷ {workout.duration} min</span>
+        <span>🔥 {workout.caloriesBurned} kcal</span>
+        <span>★ {workout.rating}</span>
+      </div>
+    </div>
 
-        {activeTab === "plan" && (
-          <button
-            type="button"
-            onClick={() =>
-              toast.success(`${workout.name} marked as done`)
-            }
-            className="bg-[#ccff00] px-4 py-2 text-[10px] font-black uppercase tracking-wide text-black"
-          >
-            ✓ Mark as Done
-          </button>
-        )}
+    {/* Actions */}
+    <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col">
 
+      <Link
+        href={`/workouts/${workout.id}`}
+        className="border border-white/15 px-4 py-2 text-center text-[10px] font-black uppercase tracking-wide text-white transition hover:border-[#ccff00] hover:text-[#ccff00]"
+      >
+        View Details
+      </Link>
+
+      {activeTab === "plan" && (
         <button
           type="button"
-          onClick={onRemove}
-          className="border border-red-500/30 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-red-400 transition hover:border-red-400 hover:text-red-300"
+          onClick={onMarkAsDone}
+          disabled={completed}
+          className={`px-4 py-2 text-[10px] font-black uppercase tracking-wide ${
+            completed
+              ? "cursor-not-allowed bg-white/10 text-white/40"
+              : "bg-[#ccff00] text-black hover:bg-[#d8ff33]"
+          }`}
         >
-          × Remove
+          {completed
+            ? "✓ Completed"
+            : "✓ Mark as Done"}
         </button>
+      )}
 
-      </div>
-    </article>
-  );
-};
+      <button
+        type="button"
+        onClick={onRemove}
+        className="border border-red-500/30 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-red-400 transition hover:border-red-400 hover:text-red-300"
+      >
+        × Remove
+      </button>
+    </div>
+  </article>
+);
 
 interface EmptyStateProps {
   activeTab: Tab;
@@ -251,29 +286,25 @@ interface EmptyStateProps {
 
 const EmptyState = ({
   activeTab,
-}: EmptyStateProps) => {
-  return (
-    <div className="border border-dashed border-white/10 px-6 py-20 text-center">
+}: EmptyStateProps) => (
+  <div className="border border-dashed border-white/10 px-6 py-20 text-center">
+    <h2 className="font-[var(--font-oswald)] text-3xl font-bold uppercase">
+      Nothing Here Yet
+    </h2>
 
-      <h2 className="font-[var(--font-oswald)] text-3xl font-bold uppercase">
-        Nothing Here Yet
-      </h2>
+    <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white/40">
+      {activeTab === "plan"
+        ? "Browse the library and add a lift to get today moving."
+        : "Save workouts from the library and they will appear here."}
+    </p>
 
-      <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white/40">
-        {activeTab === "plan"
-          ? "Browse the library and add a lift to get today moving."
-          : "Save workouts from the library and they will appear here."}
-      </p>
-
-      <Link
-        href="/#library"
-        className="mt-7 inline-block bg-[#ccff00] px-6 py-3 text-xs font-black uppercase tracking-wide text-black transition hover:bg-[#d8ff33]"
-      >
-        Go to Workouts
-      </Link>
-
-    </div>
-  );
-};
+    <Link
+      href="/#library"
+      className="mt-7 inline-block bg-[#ccff00] px-6 py-3 text-xs font-black uppercase tracking-wide text-black transition hover:bg-[#d8ff33]"
+    >
+      Go to Workouts
+    </Link>
+  </div>
+);
 
 export default MyPlanPage;
