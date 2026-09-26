@@ -4,77 +4,83 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useFitLog } from "../context/FitLogContext";
+
 const Navbar = () => {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    const isWorkoutActive =
-        pathname === "/" || pathname.startsWith("/workouts");
+  const { plan, saved } = useFitLog();
 
-    const isPlanActive = pathname === "/my-plan";
+  const isWorkoutActive =
+    pathname === "/" || pathname.startsWith("/workouts");
 
-    return (
-        <header className="border-b border-white/10 bg-[#090909]">
-            <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-5 md:px-8">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 shrink-0">
-                    <Image
-                        src="/logo.png"
-                        alt="FitLog logo"
-                        width={32}
-                        height={32}
-                        priority
-                        className="h-8 w-8 object-contain"
-                    />
+  const isPlanActive = pathname === "/my-plan";
 
-                    <span className="font-[var(--font-oswald)] text-xl font-bold tracking-wide text-white">
-                        FITLOG
-                    </span>
-                </Link>
+  return (
+    <header className="border-b border-white/10 bg-[#090909]">
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-5 md:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="FitLog logo"
+            width={32}
+            height={32}
+            priority
+            className="h-8 w-8 object-contain"
+          />
 
-                {/* Navigation */}
-                <nav className="hidden items-center gap-2 md:flex">
-                    <Link
-                        href="/"
-                        className={`px-4 py-2 text-sm font-bold uppercase tracking-wide transition ${isWorkoutActive
-                                ? "bg-[#ccff00] text-black"
-                                : "text-white/60 hover:text-white"
-                            }`}
-                    >
-                        Workout
-                    </Link>
+          <span className="font-[var(--font-oswald)] text-xl font-bold tracking-wide text-white">
+            FITLOG
+          </span>
+        </Link>
 
-                    <Link
-                        href="/my-plan"
-                        className={`px-4 py-2 text-sm font-bold uppercase tracking-wide transition ${isPlanActive
-                                ? "bg-[#ccff00] text-black"
-                                : "text-white/60 hover:text-white"
-                            }`}
-                    >
-                        My Plan
-                    </Link>
-                </nav>
+        {/* Navigation */}
+        <nav className="hidden items-center gap-2 md:flex">
+          <Link
+            href="/"
+            className={`px-4 py-2 text-sm font-bold uppercase tracking-wide transition ${
+              isWorkoutActive
+                ? "bg-[#ccff00] text-black"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            Workout
+          </Link>
 
-                {/* Counters */}
-                <div className="flex items-center gap-2">
-                    <Link
-                        href="/my-plan"
-                        className="flex items-center gap-2 rounded-full bg-[#ccff00] px-3 py-1.5 text-xs font-black uppercase text-black"
-                    >
-                        <span>Plan</span>
-                        <span>0</span>
-                    </Link>
+          <Link
+            href="/my-plan"
+            className={`px-4 py-2 text-sm font-bold uppercase tracking-wide transition ${
+              isPlanActive
+                ? "bg-[#ccff00] text-black"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            My Plan
+          </Link>
+        </nav>
 
-                    <Link
-                        href="/my-plan"
-                        className="flex items-center gap-2 rounded-full border border-white/30 px-3 py-1.5 text-xs font-black uppercase text-white"
-                    >
-                        <span>Saved</span>
-                        <span>0</span>
-                    </Link>
-                </div>
-            </div>
-        </header>
-    );
+        {/* Counters */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/my-plan"
+            className="flex items-center gap-2 rounded-full bg-[#ccff00] px-3 py-1.5 text-xs font-black uppercase text-black"
+          >
+            <span>Plan</span>
+            <span>{plan.length}</span>
+          </Link>
+
+          <Link
+            href="/my-plan"
+            className="flex items-center gap-2 rounded-full border border-white/30 px-3 py-1.5 text-xs font-black uppercase text-white"
+          >
+            <span>Saved</span>
+            <span>{saved.length}</span>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
 };
 
 export default Navbar;

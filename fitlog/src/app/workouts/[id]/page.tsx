@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import { getWorkoutById } from "../../../lib/api";
+import WorkoutActions from "../../../components/WorkoutActions";
 
 interface WorkoutDetailsPageProps {
   params: Promise<{
@@ -28,7 +30,6 @@ const WorkoutDetailsPage = async ({
 
         {/* Main Details */}
         <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-16">
-          
           {/* Image */}
           <div className="relative aspect-[4/3] overflow-hidden bg-white/5">
             <Image
@@ -43,7 +44,6 @@ const WorkoutDetailsPage = async ({
 
           {/* Content */}
           <div>
-            
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
               {workout.muscleGroups.map((group) => (
@@ -72,7 +72,6 @@ const WorkoutDetailsPage = async ({
 
             {/* Specs */}
             <div className="mt-8 grid grid-cols-2 border-y border-white/10 md:grid-cols-3">
-
               <div className="border-b border-white/10 p-4 md:border-r">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">
                   Equipment
@@ -132,7 +131,6 @@ const WorkoutDetailsPage = async ({
                   {workout.caloriesBurned}
                 </p>
               </div>
-
             </div>
 
             {/* Rating */}
@@ -146,30 +144,13 @@ const WorkoutDetailsPage = async ({
               </span>
             </div>
 
-            {/* Actions */}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-
-              <button
-                type="button"
-                className="bg-[#ccff00] px-6 py-3 text-xs font-black uppercase tracking-wide text-black transition hover:bg-[#d8ff33]"
-              >
-                Add to Today&apos;s Plan
-              </button>
-
-              <button
-                type="button"
-                className="border border-white/20 px-6 py-3 text-xs font-black uppercase tracking-wide text-white transition hover:border-[#ccff00] hover:text-[#ccff00]"
-              >
-                Save for Later
-              </button>
-
-            </div>
+            {/* Action Buttons */}
+            <WorkoutActions workout={workout} />
           </div>
         </div>
 
         {/* Instructions */}
         <section className="mt-16 border-t border-white/10 pt-12">
-
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ccff00]">
             HOW TO PERFORM
           </p>
@@ -179,7 +160,6 @@ const WorkoutDetailsPage = async ({
           </h2>
 
           <ol className="mt-8 max-w-4xl space-y-5">
-
             {workout.instructions.map((instruction, index) => (
               <li
                 key={index}
@@ -194,7 +174,6 @@ const WorkoutDetailsPage = async ({
                 </p>
               </li>
             ))}
-
           </ol>
         </section>
       </section>

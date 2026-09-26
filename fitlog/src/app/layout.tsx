@@ -7,6 +7,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { FitLogProvider } from "../context/FitLogContext";
 
+import { Toaster } from "react-hot-toast";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -31,6 +33,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${oswald.variable}`}>
         <FitLogProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 2500,
+              style: {
+                background: "#111111",
+                color: "#ffffff",
+                border: "1px solid rgba(255,255,255,0.1)",
+              },
+            }}
+          />
+
           <div className="flex min-h-screen flex-col bg-[#050505] text-white">
             <Navbar />
 
